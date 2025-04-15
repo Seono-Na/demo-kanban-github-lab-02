@@ -1,9 +1,9 @@
 import { getLabels } from '@api/labelApi';
 import { getUsers } from '@api/userApi';
-import { GitHubUser, Label } from '@type/githubTypes';
+import { GitHubLabel, GitHubUser } from '@type/githubOctokitTypes';
 
 export async function fetchMeta(): Promise<{
-  labels: Label[];
+  labels: GitHubLabel[];
   users: GitHubUser[];
 }> {
   const [labelRes, userRes] = await Promise.all([getLabels(), getUsers()]);

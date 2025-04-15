@@ -3,12 +3,17 @@ import { Button } from '@shared/shadcn/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@shared/shadcn/ui/dialog';
 import { Input } from '@shared/shadcn/ui/input';
 import { Textarea } from '@shared/shadcn/ui/textarea';
-import { CreateIssueParams, GitHubUser, Label } from '@type/githubTypes';
+import {
+  CreateIssueInput,
+  GitHubLabel,
+  GitHubUser,
+} from '@type/githubOctokitTypes';
 import { useEffect, useState } from 'react';
 
 import { MultiSelect } from '@/shared/MultiSelect';
@@ -23,7 +28,7 @@ type Props = {
 export function IssueCreateModal({ open, onClose }: Props) {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
-  const [labels, setLabels] = useState<Label[]>([]);
+  const [labels, setLabels] = useState<GitHubLabel[]>([]);
   const [users, setUsers] = useState<GitHubUser[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
@@ -45,7 +50,7 @@ export function IssueCreateModal({ open, onClose }: Props) {
     if (!title.trim()) return alert('제목을 입력해주세요.');
     setLoading(true);
     try {
-      const params: CreateIssueParams = {
+      const params: CreateIssueInput = {
         title,
         body,
         labels: selectedLabels,
@@ -53,8 +58,8 @@ export function IssueCreateModal({ open, onClose }: Props) {
       };
       await createIssue(params);
       setTimeout(() => {
-        onClose(); // TODO: 성공 메시지 띄우기
-      }, 2000);
+        onClose();
+      }, 2400);
     } catch (err) {
       console.error('이슈 생성 실패', err);
       alert('이슈 생성 중 오류가 발생했습니다.');
@@ -68,6 +73,9 @@ export function IssueCreateModal({ open, onClose }: Props) {
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>새 이슈 작성</DialogTitle>
+          <DialogDescription>
+            제목, 설명, 라벨, 담당자를 설정해 새 GitHub 이슈를 작성할 수 있어요.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
