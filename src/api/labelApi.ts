@@ -1,7 +1,9 @@
-import { Label } from '@type/githubTypes';
+import { githubRepo } from '@/lib/githubRepoInfo';
+import { octokit } from '@/lib/octokit';
 
-import { httpClient } from './httpClient';
-
-export const getLabels = () => {
-  return httpClient.get<Label[]>('/labels');
+export const getLabels = async () => {
+  const res = await octokit.rest.issues.listLabelsForRepo({
+    ...githubRepo,
+  });
+  return res.data;
 };

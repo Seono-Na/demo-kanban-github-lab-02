@@ -1,8 +1,6 @@
-import { GitHubRateLimit } from '@/types/githubTypes';
-
-import { httpClient } from './httpClient';
+import { octokit } from '@/lib/octokit';
 
 export const fetchRateLimit = async () => {
-  const res = await httpClient.get<GitHubRateLimit>('/rate_limit', false);
-  return res.rate;
+  const res = await octokit.rest.rateLimit.get();
+  return res.data.rate; // limit, remaining, reset 정보 포함
 };

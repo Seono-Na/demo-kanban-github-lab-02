@@ -1,7 +1,9 @@
-import { GitHubUser } from '@type/githubTypes';
+import { githubRepo } from '@/lib/githubRepoInfo';
+import { octokit } from '@/lib/octokit';
 
-import { httpClient } from './httpClient';
-
-export const getUsers = () => {
-  return httpClient.get<GitHubUser[]>('/collaborators');
+export const getUsers = async () => {
+  const res = await octokit.rest.repos.listCollaborators({
+    ...githubRepo,
+  });
+  return res.data;
 };
