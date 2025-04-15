@@ -9,7 +9,7 @@ import {
 } from '@shared/shadcn/ui/dialog';
 import { Skeleton } from '@shared/shadcn/ui/skeleton';
 import { formatRelativeTime } from '@shared/utils/date';
-import { IssueDetail } from '@type/githubTypes';
+import { GitHubIssueDetail, GitHubLabel } from '@type/githubOctokitTypes';
 import { useEffect, useState } from 'react';
 
 import { IssueAssignees } from './IssueAssignees';
@@ -22,7 +22,7 @@ type Props = {
 };
 
 export function IssueDetailModal({ issueNumber, onClose }: Props) {
-  const [issue, setIssue] = useState<IssueDetail | null>(null);
+  const [issue, setIssue] = useState<GitHubIssueDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,7 +40,7 @@ export function IssueDetailModal({ issueNumber, onClose }: Props) {
         setError('이슈를 불러올 수 없습니다.');
 
         setTimeout(() => {
-          onClose(); // navigate('/') 또는 홈으로 이동
+          onClose();
         }, 2000);
       } finally {
         setLoading(false);
@@ -69,7 +69,7 @@ export function IssueDetailModal({ issueNumber, onClose }: Props) {
             <>
               <DialogTitle className="text-xl">{issue.title}</DialogTitle>
               <DialogDescription className="text-muted-foreground text-sm">
-                #{issue.number} • 작성자: {issue.user.login} •{' '}
+                #{issue.number} • 작성자: {issue.user?.login} •{' '}
                 {formatRelativeTime(issue.created_at)}
               </DialogDescription>
             </>
@@ -93,7 +93,15 @@ export function IssueDetailModal({ issueNumber, onClose }: Props) {
             <div className="mt-4 space-y-4">
               <section>
                 <h4 className="mb-1 text-sm font-semibold">라벨</h4>
-                <IssueLabels labels={issue.labels} />
+                <IssueLabels
+                  labels={issue.labels.filter(
+                    (label): label is GitHubLabel =>
+                      typeof label !== 'string' &&
+                      label.id !== undefined &&
+                      label.name !== undefined &&
+                      label.color !== undefined
+                  )}
+                />{' '}
               </section>
 
               <section>

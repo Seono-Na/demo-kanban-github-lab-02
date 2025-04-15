@@ -2,7 +2,7 @@ import { getIssues } from '@api/issueApi';
 import { IssueCreateModal } from '@components/issue/IssueCreateModal';
 import { IssueDetailModal } from '@components/issue/IssueDetailModal';
 import { Skeleton } from '@shared/shadcn/ui/skeleton';
-import { Issue } from '@type/githubTypes';
+import { GitHubIssue } from '@type/githubOctokitTypes';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ export function IssueList() {
   const { issueNumber } = useParams<{ issueNumber?: string }>();
   const isCreating = location.pathname === '/issues/new';
 
-  const [issues, setIssues] = useState<Issue[]>([]);
+  const [issues, setIssues] = useState<GitHubIssue[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchIssues = async () => {
@@ -61,8 +61,8 @@ export function IssueList() {
               <IssueCard
                 title={issue.title}
                 number={issue.number}
-                user={issue.user.login}
-                state={issue.state}
+                user={issue.user?.login ?? '알 수 없음'}
+                state={issue.state as 'open' | 'closed'}
               />
             </div>
           ))}
