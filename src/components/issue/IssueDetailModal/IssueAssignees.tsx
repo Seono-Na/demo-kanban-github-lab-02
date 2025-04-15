@@ -1,13 +1,15 @@
+import { GitHubIssueDetail } from '@type/githubOctokitTypes';
+
 type Props = {
-  assignees: {
-    id: number;
-    login: string;
-    avatar_url: string;
-  }[];
+  assignees: GitHubIssueDetail['assignees'];
 };
 
 export function IssueAssignees({ assignees }: Props) {
-  return assignees.length > 0 ? (
+  if (!assignees || assignees.length === 0) {
+    return <p className="text-muted-foreground text-sm">담당자 없음</p>;
+  }
+
+  return (
     <div className="flex flex-wrap items-center gap-3">
       {assignees.map((user) => (
         <div key={user.id} className="flex items-center gap-2">
@@ -20,7 +22,5 @@ export function IssueAssignees({ assignees }: Props) {
         </div>
       ))}
     </div>
-  ) : (
-    <p className="text-muted-foreground text-sm">담당자 없음</p>
   );
 }

@@ -1,15 +1,17 @@
+import { GitHubLabel } from '@type/githubOctokitTypes';
+
 type Props = {
-  labels: {
-    id: number;
-    name: string;
-    color: string;
-  }[];
+  labels: (GitHubLabel | string)[];
 };
 
 export function IssueLabels({ labels }: Props) {
-  return labels.length > 0 ? (
+  const filteredLabels = labels.filter(
+    (label): label is GitHubLabel => typeof label !== 'string'
+  );
+
+  return filteredLabels.length > 0 ? (
     <div className="flex flex-wrap gap-2">
-      {labels.map((label) => (
+      {filteredLabels.map((label) => (
         <span
           key={label.id}
           className="rounded-full px-2 py-1 text-xs"

@@ -1,5 +1,5 @@
 import { fetchRateLimit } from '@api/rateLimitApi';
-import type { GitHubRateLimit } from '@type/githubTypes';
+import type { GitHubRateLimit } from '@type/githubOctokitTypes';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { useEffect, useState } from 'react';
 
