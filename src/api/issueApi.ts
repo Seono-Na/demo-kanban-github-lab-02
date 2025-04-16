@@ -1,4 +1,4 @@
-import { CreateIssueInput } from '@type/githubOctokitTypes';
+import { CreateIssueInput, UpdateIssueInput } from '@type/githubOctokitTypes';
 
 import { githubRepo } from '@/lib/githubRepoInfo';
 import { octokit } from '@/lib/octokit';
@@ -22,5 +22,15 @@ export async function createIssue(input: CreateIssueInput) {
   return octokit.issues.create({
     ...githubRepo,
     ...input,
+  });
+}
+
+export async function updateIssue(input: UpdateIssueInput) {
+  const { issueNumber, ...rest } = input;
+
+  return octokit.issues.update({
+    ...githubRepo,
+    issue_number: issueNumber,
+    ...rest,
   });
 }
