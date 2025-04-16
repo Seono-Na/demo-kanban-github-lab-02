@@ -1,0 +1,1 @@
+export { IssueEditModal } from './IssueEditModal';
