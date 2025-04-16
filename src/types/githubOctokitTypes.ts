@@ -35,6 +35,9 @@ export type CreateIssueParams =
 export type CreateIssueRequest =
   RestEndpointMethodTypes['issues']['create']['parameters'];
 
+export type UpdateIssueParams =
+  RestEndpointMethodTypes['issues']['update']['parameters'];
+
 //
 // ✍️ 사용자 정의 입력 타입
 //
@@ -44,4 +47,13 @@ export type CreateIssueInput = {
   body?: string;
   labels?: string[];
   assignees?: string[];
+};
+
+export type UpdateIssueInput = {
+  issueNumber: number;
+  title?: string;
+  body?: string;
+  labels?: string[];
+  assignees?: string[];
+  state?: 'open' | 'closed';
 };
