@@ -1,6 +1,7 @@
 import { getIssues } from '@api/issueApi';
 import { IssueCreateModal } from '@components/issue/IssueCreateModal';
 import { IssueDetailModal } from '@components/issue/IssueDetailModal';
+import { IssueEditModal } from '@components/issue/IssueEditModal';
 import { Skeleton } from '@shared/shadcn/ui/skeleton';
 import { GitHubIssue } from '@type/githubOctokitTypes';
 import { useEffect, useState } from 'react';
@@ -15,6 +16,7 @@ export function IssueList() {
   const navigate = useNavigate();
   const { issueNumber } = useParams<{ issueNumber?: string }>();
   const isCreating = location.pathname === '/issues/new';
+  const isEditing = location.pathname.endsWith('/edit');
 
   const [issues, setIssues] = useState<GitHubIssue[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,6 +85,20 @@ export function IssueList() {
           onCreated={() => {
             fetchIssues();
             closeModal();
+          }}
+        />
+      )}
+
+      {issueNumber && isEditing && (
+        <IssueEditModal
+          issueNumber={Number(issueNumber)}
+          open={true}
+          onClose={closeModal}
+          onUpdated={() => {
+            setTimeout(() => {
+              fetchIssues();
+              closeModal();
+            }, 2400);
           }}
         />
       )}
