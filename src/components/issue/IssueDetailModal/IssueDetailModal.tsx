@@ -1,4 +1,4 @@
-import { getIssueDetail } from '@api/issueApi';
+import { getIssueDetail, updateIssue } from '@api/issueApi';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import {
   Dialog,
@@ -11,6 +11,9 @@ import { Skeleton } from '@shared/shadcn/ui/skeleton';
 import { formatRelativeTime } from '@shared/utils/date';
 import { GitHubIssueDetail, GitHubLabel } from '@type/githubOctokitTypes';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { Button } from '@/shared/shadcn/ui/button';
 
 import { IssueAssignees } from './IssueAssignees';
 import { IssueLabels } from './IssueLabels';
@@ -22,7 +25,11 @@ type Props = {
 };
 
 export function IssueDetailModal({ issueNumber, onClose }: Props) {
+  const navigate = useNavigate();
+
   const [issue, setIssue] = useState<GitHubIssueDetail | null>(null);
+  const [closing, setClosing] = useState(false); // 상태 추가
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,6 +56,25 @@ export function IssueDetailModal({ issueNumber, onClose }: Props) {
 
     fetchDetail();
   }, [issueNumber, onClose]);
+
+  const handleCloseIssue = async () => {
+    if (!issue) return;
+    try {
+      setClosing(true);
+      await updateIssue({
+        issueNumber: issue.number,
+        state: 'closed',
+      });
+      setTimeout(() => {
+        onClose(); // 성공 시 모달 닫기
+      }, 2400);
+    } catch (err) {
+      console.error('이슈를 닫는 데 실패했습니다.', err);
+      alert('이슈를 닫는 데 실패했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setClosing(false);
+    }
+  };
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -82,6 +108,23 @@ export function IssueDetailModal({ issueNumber, onClose }: Props) {
 
         {!loading && !error && issue && (
           <>
+            <div className="flex justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(`/issues/${issueNumber}/edit`)}
+              >
+                ✏️ 수정
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleCloseIssue}
+                disabled={closing}
+              >
+                🛑 닫기
+              </Button>
+            </div>
             <div className="my-4 text-sm whitespace-pre-wrap">
               {issue.body ? (
                 issue.body
